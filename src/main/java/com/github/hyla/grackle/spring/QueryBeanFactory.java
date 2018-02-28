@@ -14,7 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 
-@DependsOn("gracklePredicateBeanFactory")
+@DependsOn("grackleOpertorBeanFactory")
 public class QueryBeanFactory implements SessionProvider {
 
     @Autowired

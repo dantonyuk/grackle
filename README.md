@@ -101,12 +101,12 @@ Also it is obligatory to extend ```EntityQuery``` with type parameters:
 
 ```EntityQuery``` provides useful methods, e.g. to obtain actual results.
 
-### Defining a predicate
+### Defining an operator
 
-A predicate is just a method satisfying some rules. Note that all the abstract
-methods of the grackle query should be predicates.
+An operator is just a method satisfying some rules. Note that all the abstract
+methods of the grackle query should be operators.
 
-To be a predicate method should have
+To be an operator method should have
 * return type that is the query type itself
 * name which can be splitted to property-name/operation pair
 * amount of arguments depending on the operation
@@ -130,11 +130,11 @@ default List<Order> unprocessed() {
 }
 ```
 
-### Predicates
+### Operators
 
-There are a lot of predefined predicates:
+There are a lot of predefined operators:
 
-| Predicate | Alternative names |
+| Operator | Alternative names |
 | --------- | ----------------- |
 | eq        | is, '' (empty)    |
 | like      |                   |
@@ -143,34 +143,34 @@ There are a lot of predefined predicates:
 
 The list will be wider in future.
 
-You (will) can define your own predicates. See how predicates are defined now:
+You (will) can define your own operators. See how operators are defined now:
 
 ```java
-@GracklePredicates("grackleDefaultPredicates")
-public class Predicates implements PredicateLocator {
+@GrackleOperators("grackleDefaultOperators")
+public class Operators implements OperatorLocator {
 
-    @GracklePredicate
-    private UnaryPredicate isNull = unaryPredicate(Restrictions::isNull);
+    @GrackleOperator
+    private UnaryOperator isNull = unaryOperator(Restrictions::isNull);
 
-    @GracklePredicate({ "eq", "is", "" })
-    private BinaryPredicate eq = binaryPredicate(Restrictions::eq);
+    @GrackleOperator({ "eq", "is", "" })
+    private BinaryOperator eq = binaryOperator(Restrictions::eq);
 
-    @GracklePredicate("like")
-    private BinaryPredicate like = binaryPredicate(Restrictions::like);
+    @GrackleOperator("like")
+    private BinaryOperator like = binaryOperator(Restrictions::like);
 
-    @GracklePredicate("in")
-    private BinaryPredicate<Collection> in = binaryPredicate(Restrictions::in);
+    @GrackleOperator("in")
+    private BinaryOperator<Collection> in = binaryOperator(Restrictions::in);
 
-    @GracklePredicate
-    private TernaryPredicate between = ternaryPredicate(Restrictions::between);
+    @GrackleOperator
+    private TernaryOperator between = ternaryOperator(Restrictions::between);
 
-    @GracklePredicate({"ge", "greaterOrEqual"})
-    private BinaryPredicate ge = binaryPredicate(Restrictions::ge);
+    @GrackleOperator({"ge", "greaterOrEqual"})
+    private BinaryOperator ge = binaryOperator(Restrictions::ge);
 }
 ```
 
-Note that the class itself is marked with ```@GracklePredicates``` annotation
-and implements ```PredicateLocator``` interface.
+Note that the class itself is marked with ```@GrackleOperators``` annotation
+and implements ```OperatorLocator``` interface.
 
 ### Query and EntityQuery interfaces
 

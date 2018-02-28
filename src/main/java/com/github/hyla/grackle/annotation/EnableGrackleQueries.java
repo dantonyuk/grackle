@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({ GrackleConfig.class,
-//        PredicateDefinitionRegistrar.class,
+//        OperatorDefinitionRegistrar.class,
         QueryDefinitionRegistrar.class })
 public @interface EnableGrackleQueries {
 

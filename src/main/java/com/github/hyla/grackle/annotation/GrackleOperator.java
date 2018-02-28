@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Documented
 @Bean
-public @interface GracklePredicate {
+public @interface GrackleOperator {
 
     String[] value() default {};
 }

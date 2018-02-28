@@ -1,6 +1,6 @@
 package com.github.hyla.grackle.query;
 
-import com.github.hyla.grackle.predicate.PredicateLocator;
+import com.github.hyla.grackle.operator.OperatorLocator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.sql.JoinType;
@@ -30,12 +30,12 @@ import static org.springframework.util.StringUtils.uncapitalize;
 public class QueryParser {
 
     private final Class<? extends EntityQuery> queryClass;
-    private final PredicateLocator predicateLocator;
+    private final OperatorLocator operatorLocator;
     private Class<?> entityClass;
 
-    public QueryParser(Class<? extends EntityQuery> queryClass, PredicateLocator predicateLocator) {
+    public QueryParser(Class<? extends EntityQuery> queryClass, OperatorLocator operatorLocator) {
         this.queryClass = queryClass;
-        this.predicateLocator = predicateLocator;
+        this.operatorLocator = operatorLocator;
         init();
     }
 
@@ -137,15 +137,15 @@ public class QueryParser {
     }
 
     private Optional<QueryMethodExecutor> prepareExecutor(
-            List<String> propertyPath, String predicateName, Class<?> entityClass) {
+            List<String> propertyPath, String operatorName, Class<?> entityClass) {
 
         List<String> correctedPropertyPath = propertyPath.stream()
                 .map(StringUtils::uncapitalize)
                 .collect(Collectors.toList());
 
         return asPropertyPath(correctedPropertyPath, entityClass).flatMap(
-                prop -> predicateLocator.lookup(predicateName).map(
-                        predicate -> new QueryMethodExecutor(prop.name, predicate, prop.aliases)));
+                prop -> operatorLocator.lookup(operatorName).map(
+                        operator -> new QueryMethodExecutor(prop.name, operator, prop.aliases)));
     }
 
     private Optional<PropertyPath> asPropertyPath(List<String> propertyPath, Class<?> entityClass) {

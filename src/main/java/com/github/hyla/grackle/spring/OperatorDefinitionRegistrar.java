@@ -1,6 +1,6 @@
 package com.github.hyla.grackle.spring;
 
-import com.github.hyla.grackle.annotation.GracklePredicates;
+import com.github.hyla.grackle.annotation.GrackleOperators;
 import com.github.hyla.grackle.annotation.EnableGrackleQueries;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 @Slf4j
-public class PredicateDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
+public class OperatorDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
 
     private ClassLoader beanClassLoader;
 
@@ -29,7 +29,7 @@ public class PredicateDefinitionRegistrar implements ImportBeanDefinitionRegistr
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        log.debug("Predicate definition: {}", metadata.getClassName());
+        log.debug("Operator definition: {}", metadata.getClassName());
 
         Map<String, Object> annotationAttributes = metadata
                 .getAnnotationAttributes(EnableGrackleQueries.class.getName());
@@ -44,7 +44,7 @@ public class PredicateDefinitionRegistrar implements ImportBeanDefinitionRegistr
                     }
                 };
 
-        scanner.addIncludeFilter(new AnnotationTypeFilter(GracklePredicates.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(GrackleOperators.class));
 
         Arrays.stream(basePackages)
                 .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
@@ -54,7 +54,7 @@ public class PredicateDefinitionRegistrar implements ImportBeanDefinitionRegistr
                             .resolveClassName(beanDefinition.getBeanClassName(), beanClassLoader);
 
                     String beanName = ClassUtils.getShortNameAsProperty(clazz);
-                    log.debug("Predicates bean: {}", beanName);
+                    log.debug("Operators bean: {}", beanName);
 
                     ConstructorArgumentValues args = new ConstructorArgumentValues();
                     args.addGenericArgumentValue(beanClassLoader);
@@ -63,8 +63,8 @@ public class PredicateDefinitionRegistrar implements ImportBeanDefinitionRegistr
                     GenericBeanDefinition proxyBeanDefinition = new GenericBeanDefinition();
                     proxyBeanDefinition.setBeanClass(clazz);
                     proxyBeanDefinition.setConstructorArgumentValues(args);
-                    proxyBeanDefinition.setFactoryBeanName("gracklePredicateBeanFactory");
-                    proxyBeanDefinition.setFactoryMethodName("registerPredicates");
+                    proxyBeanDefinition.setFactoryBeanName("grackleOperatorBeanFactory");
+                    proxyBeanDefinition.setFactoryMethodName("registerOperators");
 
                     registry.registerBeanDefinition(beanName, proxyBeanDefinition);
                 });

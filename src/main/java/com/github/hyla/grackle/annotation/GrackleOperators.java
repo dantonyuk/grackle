@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface GracklePredicates {
+public @interface GrackleOperators {
     String value() default "";
 }
