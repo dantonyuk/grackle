@@ -110,7 +110,7 @@ public class QueryImpl<T, I extends Serializable, Q extends QueryImpl<T, I, Q>> 
         DetachedCriteria criteria = DetachedCriteria.forClass(entityClass);
 
         for (Alias alias : aliases) {
-            alias.apply(criteria);
+            criteria = alias.apply(criteria);
         }
 
         for (DetachedCriteriaTransformer transformer : transformers) {
