@@ -38,9 +38,12 @@ public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
 
     BookQuery titleLike(String titlePattern);
 
-    BookQuery authorIs(Author author);
+    BookQuery author(Author author);
 
-    BookQuery authorNameIs(String name);
+    BookQuery author_nameIs(String name);
+
+    @WithAlias(name="writer", path="author.name")
+    BookQuery writerIs(String name);
 
     BookQuery ratingGreaterOrEqual(int value);
 }
@@ -51,7 +54,7 @@ This is how a query is used:
 ```java
 List<Book> books = bookQuery
     .titleLike(titlePattern)
-    .authorNameIs(authorName)
+    .author_nameIs(authorName)
     .ratingGreaterOrEqual(Rating.GOOD)
     .list();
 ```
@@ -101,16 +104,16 @@ Also it is obligatory to extend ```EntityQuery``` with type parameters:
 
 ```EntityQuery``` provides useful methods, e.g. to obtain actual results.
 
-### Defining an operator
+### Defining a predicate
 
-An operator is just a method satisfying some rules. Note that all the abstract
-methods of the grackle query should be operators.
+A predicate is just a method satisfying some rules. Note that all the abstract
+methods of the grackle query should be predicates.
 
-To be an operator method should have
+To be a predicate method should have
 * return type that is the query type itself
-* name which can be splitted to property-name/operation pair
-* amount of arguments depending on the operation
-* types of arguments depending on the operation and property type
+* name which can be splitted to property-path/operator pair
+* amount of arguments depending on the operator
+* types of arguments depending on the operator and property type
 
 Examples:
 
@@ -118,9 +121,24 @@ Examples:
 OrderQuery orderNumberLike(String orderNumberPattern);
 OrderQuery dateBetween(Date from, Date to);
 OrderQuery postponedIsTrue();
-OrderQuery shippingDateIsNull();
+OrderQuery shipping_dateIsNull();
 OrderQuery customerIn(List<Customer> customers);
 ```
+
+Note the ```shipping_dateIsNull``` predicate refers to not a property but property path.
+That means that ```Order``` entity has a ```shipping``` property that has a ```date``` property.
+```shipping_date``` is a path here. A path can have any depth, so you can use something like
+```prop1_prop2_prop3``.
+
+In order to have a concise predicate name we can use aliases for property paths. E.g.:
+
+```java
+@WithAlias(name="writer", path="author.name")
+BookQuery writerIs(String name);
+```
+
+Here we have ```writerIs``` method instead of ```author_nameIs``` method.
+Annotation ```@WithAlias``` is repeatable so you can use as many aliases for one method as we need.
 
 If method is not abstract, it should not obey these rules:
 
