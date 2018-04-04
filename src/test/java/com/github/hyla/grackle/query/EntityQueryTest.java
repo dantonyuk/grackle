@@ -63,11 +63,11 @@ public class EntityQueryTest {
                 .uniqueResult().isPresent());
 
         assertEquals(1, bookQuery
-                .authorNameIs("Tolkien")
+                .author_nameIs("Tolkien")
                 .titleLike("%Hobbit%")
                 .count());
 
-        BookQuery query1 = bookQuery.authorNameIs("Tolkien");
+        BookQuery query1 = bookQuery.author_nameIs("Tolkien");
         BookQuery query2 = query1.titleLike("%Hobbit%");
 
         assertEquals(2, query1.count());

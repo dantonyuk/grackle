@@ -1,30 +1,26 @@
 package com.github.hyla.grackle.query;
 
+import com.github.hyla.grackle.operator.Operator;
 import com.github.hyla.grackle.operator.OperatorLocator;
+import com.github.hyla.grackle.util.SplitUtil;
+import com.github.hyla.grackle.util.Tuple2;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.sql.JoinType;
-import org.springframework.data.util.Pair;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.apache.tomcat.util.buf.StringUtils.join;
-import static org.springframework.util.StringUtils.collectionToDelimitedString;
-import static org.springframework.util.StringUtils.uncapitalize;
 
 @Slf4j
 public class QueryParser {
@@ -92,60 +88,25 @@ public class QueryParser {
         return executors;
     }
 
-//    private Stream<List<List<String>>> foo(List<String> list) {
-//        return subsequences(
-//                IntStream.range(1, list.size()).boxed())
-//                .map(places -> splitPlaces(places.collect(Collectors.toList()), list)));
-//    }
-//
-//    private <T> Stream<Stream<T>> subsequences(Stream<T> s) {
-//
-//    }
-
-    private <T> Stream<List<T>> splitPlaces(List<Integer> places, List<T> s) {
-        if (places.isEmpty()) return Stream.of(s);
-        if (s.isEmpty()) return Stream.empty();
-        int place = places.get(0);
-        List<T> l = s.subList(0, place);
-        List<T> r = s.subList(place, s.size());
-        return Stream.concat(
-                Stream.of(l),
-                splitPlaces(places.stream().map(x -> x - place).collect(Collectors.toList()), r));
-    }
-
     private QueryMethodExecutor parse(Method method, Class<?> entityClass) {
-        List<String> words = Arrays.asList(method.getName().split("(?<!^)(?=[A-Z])"));
-        int wordCount = words.size();
-        Optional<QueryMethodExecutor> parsed = IntStream.range(0, wordCount).boxed()
-                .map(i -> Pair.of(
-                        words.subList(0, wordCount - i),            // candidate for property path
-                        words.subList(wordCount - i, wordCount)))   // candidate for operation
-                .map(p -> prepareExecutor(p.getFirst(), joinWords(p.getSecond()), entityClass))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
+        Optional<Tuple2<List<String>, Operator>> found = SplitUtil
+                .findOnRight(method.getName(), operatorLocator::lookup)
+                .map(t -> t.map1(x -> SplitUtil.splitWithAliases(x, Collections.emptyMap())));
 
-        if (!parsed.isPresent()) {
-            throw new IllegalStateException("Property path and/or operation not found in " + method.getName());
+        if (!found.isPresent()) {
+            throw new IllegalStateException("Operation not found in " + method.getName());
         }
 
-        return parsed.get();
-    }
+        Operator operator = found.get().get_2();
+        Optional<PropertyPath> validatedPath = asPropertyPath(found.get().get_1(), entityClass);
 
-    private String joinWords(List<String> words) {
-        return uncapitalize(collectionToDelimitedString(words, ""));
-    }
+        if (!validatedPath.isPresent()) {
+            throw new IllegalStateException("Property path not found in " + method.getName());
+        }
 
-    private Optional<QueryMethodExecutor> prepareExecutor(
-            List<String> propertyPath, String operatorName, Class<?> entityClass) {
+        PropertyPath path = validatedPath.get();
 
-        List<String> correctedPropertyPath = propertyPath.stream()
-                .map(StringUtils::uncapitalize)
-                .collect(Collectors.toList());
-
-        return asPropertyPath(correctedPropertyPath, entityClass).flatMap(
-                prop -> operatorLocator.lookup(operatorName).map(
-                        operator -> new QueryMethodExecutor(prop.name, operator, prop.aliases)));
+        return new QueryMethodExecutor(path.name, operator, path.aliases);
     }
 
     private Optional<PropertyPath> asPropertyPath(List<String> propertyPath, Class<?> entityClass) {
@@ -171,12 +132,8 @@ public class QueryParser {
                 .map(field -> new EntityProperty(propertyName, field.getType()));
     }
 
-    private String toPropertyName(List<String> propertyPath) {
-        return uncapitalize(propertyPath.stream().map(StringUtils::capitalize).collect(Collectors.joining()));
-    }
-
     @Data
-    private class EntityProperty {
+    private static class EntityProperty {
         private final String name;
         private final Class<?> propertyClass;
     }
@@ -190,16 +147,21 @@ public class QueryParser {
             aliases = new ArrayList<>(Math.max(0, path.size() - 4));
             for (int i = 1; i < path.size(); i++) {
                 String aliasName = join(path.subList(0, i), '_');
-                // haha! sorry for that, will be replaced in future
-                String aliasPath = reverse(reverse(aliasName).replaceFirst("_", "."));
+                String aliasPath = replaceLastUnderscoreWithDot(aliasName);
+
                 aliases.add(new Alias(aliasName, aliasPath, JoinType.INNER_JOIN));
             }
 
-            name = reverse(reverse(join(path, '_').replaceFirst("_", ".")));
+            name = replaceLastUnderscoreWithDot(join(path, '_'));
         }
 
-        private String reverse(String s) {
-            return new StringBuilder(s).reverse().toString();
+        private String replaceLastUnderscoreWithDot(String str) {
+            int pos = str.lastIndexOf("_");
+            if (pos == -1) {
+                return str;
+            }
+
+            return new StringBuilder(str).replace(pos, pos + 1, ".").toString();
         }
     }
 }

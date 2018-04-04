@@ -14,7 +14,7 @@ public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
 
     BookQuery authorIs(Author author);
 
-    BookQuery authorNameIs(String name); // should be author_name
+    BookQuery author_nameIs(String name); // should be author_name
 
     BookQuery ratingGreaterOrEqual(int value);
 
