@@ -1,5 +1,6 @@
 package com.github.hyla.grackle.query;
 
+import com.github.hyla.grackle.annotation.WithAlias;
 import com.github.hyla.grackle.operator.Operator;
 import com.github.hyla.grackle.operator.OperatorLocator;
 import com.github.hyla.grackle.util.SplitUtil;
@@ -14,11 +15,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.apache.tomcat.util.buf.StringUtils.join;
 
@@ -89,9 +92,11 @@ public class QueryParser {
     }
 
     private QueryMethodExecutor parse(Method method, Class<?> entityClass) {
+        Map<String, List<String>> aliases = parseAliases(method);
+
         Optional<Tuple2<List<String>, Operator>> found = SplitUtil
                 .findOnRight(method.getName(), operatorLocator::lookup)
-                .map(t -> t.map1(x -> SplitUtil.splitWithAliases(x, Collections.emptyMap())));
+                .map(t -> t.map1(x -> SplitUtil.splitWithAliases(x, aliases)));
 
         if (!found.isPresent()) {
             throw new IllegalStateException("Operation not found in " + method.getName());
@@ -107,6 +112,16 @@ public class QueryParser {
         PropertyPath path = validatedPath.get();
 
         return new QueryMethodExecutor(path.name, operator, path.aliases);
+    }
+
+    private Map<String, List<String>> parseAliases(Method method) {
+        WithAlias[] aliases = method.getAnnotationsByType(WithAlias.class);
+        if (aliases == null) {
+            return Collections.emptyMap();
+        }
+
+        return Arrays.stream(aliases).collect(Collectors.toMap(
+                WithAlias::name, a -> Arrays.asList(a.path().split("\\."))));
     }
 
     private Optional<PropertyPath> asPropertyPath(List<String> propertyPath, Class<?> entityClass) {

@@ -67,6 +67,21 @@ public class EntityQueryTest {
                 .titleLike("%Hobbit%")
                 .count());
 
+        assertEquals(1, bookQuery
+                .creatorIs("Tolkien")
+                .titleLike("%Hobbit%")
+                .count());
+
+        assertEquals(1, bookQuery
+                .writer_penname("Tolkien")
+                .titleLike("%Hobbit%")
+                .count());
+
+        assertEquals(1, bookQuery
+                .writer_thename("Tolkien")
+                .titleLike("%Hobbit%")
+                .count());
+
         BookQuery query1 = bookQuery.author_nameIs("Tolkien");
         BookQuery query2 = query1.titleLike("%Hobbit%");
 
