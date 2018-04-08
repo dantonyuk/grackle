@@ -8,6 +8,7 @@ import com.github.hyla.grackle.annotation.GrackleOperators;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.Collection;
@@ -22,20 +23,66 @@ public class Operators {
     @GrackleOperator
     private UnaryOperator isNull = unaryOperator(Restrictions::isNull);
 
+    @GrackleOperator
+    private UnaryOperator isNotNull = unaryOperator(Restrictions::isNotNull);
+
+    @GrackleOperator
+    private UnaryOperator isEmpty = unaryOperator(Restrictions::isEmpty);
+
+    @GrackleOperator
+    private UnaryOperator isNotEmpty = unaryOperator(Restrictions::isNotEmpty);
+
     @GrackleOperator({ "eq", "is", "" })
     private BinaryOperator eq = binaryOperator(Restrictions::eq);
 
-    @GrackleOperator("like")
+    @GrackleOperator({ "ne", "isNot" })
+    private BinaryOperator ne = binaryOperator(Restrictions::ne);
+
+    @GrackleOperator
     private BinaryOperator like = binaryOperator(Restrictions::like);
+
+    @GrackleOperator
+    private BinaryOperator ilike = binaryOperator(Restrictions::ilike);
+
+    @GrackleOperator
+    private BinaryOperator startsWith = binaryOperator(
+            (name, value) -> Restrictions.like(name, (String) value, MatchMode.START));
+
+    @GrackleOperator
+    private BinaryOperator endsWith = binaryOperator(
+            (name, value) -> Restrictions.like(name, (String) value, MatchMode.END));
+
+    @GrackleOperator
+    private BinaryOperator istartsWith = binaryOperator(
+            (name, value) -> Restrictions.ilike(name, (String) value, MatchMode.START));
+
+    @GrackleOperator
+    private BinaryOperator iendsWith = binaryOperator(
+            (name, value) -> Restrictions.ilike(name, (String) value, MatchMode.END));
+
+    @GrackleOperator
+    private BinaryOperator eqOrIsNull = binaryOperator(Restrictions::eqOrIsNull);
+
+    @GrackleOperator
+    private BinaryOperator neOrIsNotNull = binaryOperator(Restrictions::neOrIsNotNull);
+
+    @GrackleOperator({"ge", "greaterOrEqual"})
+    private BinaryOperator ge = binaryOperator(Restrictions::ge);
+
+    @GrackleOperator({"gt", "greaterThan"})
+    private BinaryOperator gt = binaryOperator(Restrictions::gt);
+
+    @GrackleOperator({"le", "lessOrEqual"})
+    private BinaryOperator le = binaryOperator(Restrictions::le);
+
+    @GrackleOperator({"lt", "lessThan"})
+    private BinaryOperator lt = binaryOperator(Restrictions::lt);
 
     @GrackleOperator("in")
     private BinaryOperator<Collection> in = binaryOperator(Restrictions::in);
 
     @GrackleOperator
     private TernaryOperator between = ternaryOperator(Restrictions::between);
-
-    @GrackleOperator({"ge", "greaterOrEqual"})
-    private BinaryOperator ge = binaryOperator(Restrictions::ge);
 
     ////////////////////////////////////////////////////
 

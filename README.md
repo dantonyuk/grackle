@@ -152,12 +152,28 @@ default List<Order> unprocessed() {
 
 There are a lot of predefined operators:
 
-| Operator | Alternative names |
-| --------- | ----------------- |
-| eq        | is, '' (empty)    |
-| like      |                   |
-| in        |                   |
-| ge        | greaterOrEqual    |
+| Operator      | Alternative names |
+| ------------- | ----------------- |
+| eq            | is, '' (empty)    |
+| ne            | isNot             |
+| isNull        |                   |
+| isNotNull     |                   |
+| isEmpty       |                   |
+| isNotEmpty    |                   |
+| eqOrIsNull    |                   |
+| neOrIsNotNull |                   |
+| like          |                   |
+| startsWith    |                   |
+| endsWith      |                   |
+| ilike         |                   |
+| istartsWith   |                   |
+| iendsWith     |                   |
+| in            |                   |
+| ge            | greaterOrEqual    |
+| gt            | greaterThan       |
+| le            | lessOrEqual       |
+| lt            | lessThan          |
+| between       |                   |
 
 The list will be wider in future.
 
