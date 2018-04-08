@@ -89,14 +89,11 @@ public class QueryImpl<T, I extends Serializable, Q extends QueryImpl<T, I, Q>> 
 
     QueryImpl<T, I, Q> copyWith(List<Alias> newAliases, DetachedCriteriaTransformer transformer) {
         QueryImpl<T, I, Q> copy = new QueryImpl<>(entityClass, idClass, sessionProvider);
-
-        for (Alias newAlias : newAliases) {
-            if (!copy.aliases.contains(newAlias)) {
-                copy.aliases.add(newAlias);
-            }
-        }
-
+        copy.aliases.addAll(aliases);
+        copy.aliases.addAll(newAliases);
+        copy.transformers.addAll(transformers);
         copy.transformers.add(transformer);
+
         return copy;
     }
 
@@ -114,7 +111,7 @@ public class QueryImpl<T, I extends Serializable, Q extends QueryImpl<T, I, Q>> 
         }
 
         for (DetachedCriteriaTransformer transformer : transformers) {
-            transformer.transform(criteria);
+            criteria = transformer.transform(criteria);
         }
 
         return criteria;
