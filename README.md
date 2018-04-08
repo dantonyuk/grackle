@@ -164,7 +164,7 @@ The list will be wider in future.
 You (will) can define your own operators. See how operators are defined now:
 
 ```java
-@GrackleOperators("grackleDefaultOperators")
+@GrackleOperators
 public class Operators implements OperatorLocator {
 
     @GrackleOperator

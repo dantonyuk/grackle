@@ -1,6 +1,7 @@
 package com.github.hyla.grackle.annotation;
 
 import com.github.hyla.grackle.spring.GrackleConfig;
+import com.github.hyla.grackle.spring.OperatorDefinitionRegistrar;
 import com.github.hyla.grackle.spring.QueryDefinitionRegistrar;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -12,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({ GrackleConfig.class,
-//        OperatorDefinitionRegistrar.class,
+        OperatorDefinitionRegistrar.class,
         QueryDefinitionRegistrar.class })
 public @interface EnableGrackleQueries {
 

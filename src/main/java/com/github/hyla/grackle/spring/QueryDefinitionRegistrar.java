@@ -56,7 +56,6 @@ public class QueryDefinitionRegistrar implements ImportBeanDefinitionRegistrar, 
                     proxyBeanDefinition.setBeanClass(clazz);
                     proxyBeanDefinition.setConstructorArgumentValues(args);
                     proxyBeanDefinition.setFactoryBeanName("grackleQueryBeanFactory");
-//                    proxyBeanDefinition.setDependsOn("grackleDefaultOperators");
                     proxyBeanDefinition.setFactoryMethodName("createQueryProxyBean");
 
                     registry.registerBeanDefinition(beanName, proxyBeanDefinition);

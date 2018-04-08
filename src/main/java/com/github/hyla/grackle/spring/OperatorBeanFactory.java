@@ -1,6 +1,7 @@
 package com.github.hyla.grackle.spring;
 
 import com.github.hyla.grackle.operator.BinaryOperator;
+import com.github.hyla.grackle.operator.OperatorLocator;
 import com.github.hyla.grackle.operator.TernaryOperator;
 import com.github.hyla.grackle.operator.UnaryOperator;
 import com.github.hyla.grackle.annotation.GrackleOperator;
@@ -15,8 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-//@Component("grackleOperatorBeanFactory")
-public class OperatorBeanFactory /*implements OperatorLocator*/ {
+public class OperatorBeanFactory implements OperatorLocator {
     @Getter
     private final Map<String, UnaryOperator> unaryOperators = new HashMap<>();
     @Getter

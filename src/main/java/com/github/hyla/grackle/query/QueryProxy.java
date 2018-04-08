@@ -15,14 +15,12 @@ public class QueryProxy implements InvocationHandler {
 
     private final Class<? extends EntityQuery> queryClass;
     private final QueryImpl query;
-    private final Map<Method, QueryMethodExecutor> executorMap;
+    private final QueryParser parser;
+    private Map<Method, QueryMethodExecutor> executorMap;
+    private Constructor<MethodHandles.Lookup> constructor;
 
-    private final Constructor<MethodHandles.Lookup> constructor;
-
-    public QueryProxy(Class<? extends EntityQuery> queryClass, QueryImpl original, Map<Method, QueryMethodExecutor> executorMap) {
-        this.queryClass = queryClass;
-        this.query = original;
-        this.executorMap = executorMap;
+    public QueryProxy(Class<? extends EntityQuery> queryClass, QueryImpl original, QueryParser parser) {
+        this(queryClass, original, parser, null);
 
         try {
             constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);
@@ -33,6 +31,13 @@ public class QueryProxy implements InvocationHandler {
         if (!constructor.isAccessible()) {
             constructor.setAccessible(true);
         }
+    }
+
+    private QueryProxy(Class<? extends EntityQuery> queryClass, QueryImpl original, QueryParser parser, Map<Method, QueryMethodExecutor> executorMap) {
+        this.queryClass = queryClass;
+        this.query = original;
+        this.parser = parser;
+        this.executorMap = executorMap;
     }
 
     @Override
@@ -58,9 +63,14 @@ public class QueryProxy implements InvocationHandler {
             throw new IllegalStateException("Method should return the same type");
         }
 
+        // TODO: should be moved to @PostConstruct
+        if (executorMap == null) {
+            executorMap = parser.parse();
+        }
+
         @SuppressWarnings("unchecked")
         QueryImpl nextQuery = executorMap.get(method).apply(query, args);
         return Proxy.newProxyInstance(queryClass.getClassLoader(), new Class[] { queryClass },
-                new QueryProxy(queryClass, nextQuery, executorMap));
+                new QueryProxy(queryClass, nextQuery, null, executorMap));
     }
 }

@@ -34,6 +34,10 @@ public class OperatorDefinitionRegistrar implements ImportBeanDefinitionRegistra
         Map<String, Object> annotationAttributes = metadata
                 .getAnnotationAttributes(EnableGrackleQueries.class.getName());
         String[] basePackages = (String[]) annotationAttributes.get("basePackages");
+        if (basePackages == null || basePackages.length == 0) {
+            String configPackage = metadata.getClassName().replaceFirst("\\.[^.]+$", "");
+            basePackages = new String[] { configPackage };
+        }
 
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false) {

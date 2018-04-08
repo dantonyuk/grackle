@@ -14,7 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 
-@DependsOn("grackleOpertorBeanFactory")
+@DependsOn("grackleOperatorBeanFactory")
 public class QueryBeanFactory implements SessionProvider {
 
     @Autowired
@@ -46,7 +46,7 @@ public class QueryBeanFactory implements SessionProvider {
                     return (T) Proxy.newProxyInstance(classLoader, new Class[] { queryClass }, new QueryProxy(
                             queryClass,
                             new QueryImpl((Class) typeArguments[0], (Class) typeArguments[1], this),
-                            queryParserFactory.newParser(queryClass).parse()));
+                            queryParserFactory.newParser(queryClass)));
                 }
             }
         }

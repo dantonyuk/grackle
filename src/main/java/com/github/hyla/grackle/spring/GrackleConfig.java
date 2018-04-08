@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GrackleConfig {
 
-//    @Bean(name = "grackleOperatorBeanFactory")
-//    public OperatorBeanFactory operatorBeanFactory() {
-//        return new OperatorBeanFactory();
-//    }
+    @Bean(name = "grackleOperatorBeanFactory")
+    public OperatorBeanFactory operatorBeanFactory() {
+        return new OperatorBeanFactory();
+    }
 
     @Bean(name = "grackleQueryBeanFactory")
     public QueryBeanFactory queryBeanFactory() {
@@ -20,9 +20,4 @@ public class GrackleConfig {
     public QueryParserFactory queryParserFactory() {
         return new QueryParserFactory();
     }
-//
-//    @Bean(name = "grackleDefaultoperators")
-//    public Operators operators() {
-//        return new Operators();
-//    }
 }
