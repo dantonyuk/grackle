@@ -79,7 +79,7 @@ public class EntityQueryTest {
                 .count());
 
         assertEquals(1, bookQuery
-                .writer_Thename("Tolkien")
+                .writer_TheName("Tolkien")
                 .titleLike("%Hobbit%")
                 .count());
 

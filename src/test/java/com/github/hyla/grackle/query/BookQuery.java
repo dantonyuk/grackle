@@ -30,9 +30,9 @@ public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
 
     @WithAliases({
         @WithAlias(name="writer", path="author"),
-        @WithAlias(name="thename", path="name")
+        @WithAlias(name="theName", path="name")
     })
-    BookQuery writer_Thename(String name);
+    BookQuery writer_TheName(String name);
 
     default BookQuery isBestseller() {
         return ratingGreaterOrEqual(5);
