@@ -11,6 +11,11 @@ public class GrackleConfig {
         return new OperatorBeanFactory();
     }
 
+    @Bean(name = "grackleDefaultOperators")
+    public Operators defaultOperators() {
+        return new Operators();
+    }
+
     @Bean(name = "grackleQueryBeanFactory")
     public QueryBeanFactory queryBeanFactory() {
         return new QueryBeanFactory();
