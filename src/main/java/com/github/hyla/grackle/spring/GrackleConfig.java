@@ -20,9 +20,4 @@ public class GrackleConfig {
     public QueryBeanFactory queryBeanFactory() {
         return new QueryBeanFactory();
     }
-
-    @Bean(name = "grackleQueryParserFactory")
-    public QueryParserFactory queryParserFactory() {
-        return new QueryParserFactory();
-    }
 }

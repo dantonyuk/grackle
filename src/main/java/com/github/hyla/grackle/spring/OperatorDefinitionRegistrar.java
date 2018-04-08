@@ -43,11 +43,10 @@ public class OperatorDefinitionRegistrar implements ImportBeanDefinitionRegistra
                 new ClassPathScanningCandidateComponentProvider(false) {
                     @Override
                     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-                        return beanDefinition.getMetadata().isIndependent() &&
-                                !beanDefinition.getMetadata().isAbstract();
+                        AnnotationMetadata meta = beanDefinition.getMetadata();
+                        return meta.isIndependent() && !meta.isAbstract();
                     }
                 };
-
         scanner.addIncludeFilter(new AnnotationTypeFilter(GrackleOperators.class));
 
         Arrays.stream(basePackages)

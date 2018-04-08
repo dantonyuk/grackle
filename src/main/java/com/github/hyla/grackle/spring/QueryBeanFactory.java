@@ -1,7 +1,9 @@
 package com.github.hyla.grackle.spring;
 
+import com.github.hyla.grackle.operator.OperatorLocator;
 import com.github.hyla.grackle.query.EntityQuery;
 import com.github.hyla.grackle.query.QueryImpl;
+import com.github.hyla.grackle.query.QueryParser;
 import com.github.hyla.grackle.query.QueryProxy;
 import com.github.hyla.grackle.query.SessionProvider;
 import org.hibernate.Session;
@@ -21,7 +23,7 @@ public class QueryBeanFactory implements SessionProvider {
     private SessionFactory sessionFactory;
 
     @Autowired
-    private QueryParserFactory queryParserFactory;
+    private OperatorLocator operatorLocator;
 
     @Override
     public Session getSession() {
@@ -46,7 +48,7 @@ public class QueryBeanFactory implements SessionProvider {
                     return (T) Proxy.newProxyInstance(classLoader, new Class[] { queryClass }, new QueryProxy(
                             queryClass,
                             new QueryImpl((Class) typeArguments[0], (Class) typeArguments[1], this),
-                            queryParserFactory.newParser(queryClass)));
+                            new QueryParser(queryClass, operatorLocator)));
                 }
             }
         }

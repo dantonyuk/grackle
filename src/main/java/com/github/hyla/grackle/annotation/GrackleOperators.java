@@ -13,5 +13,4 @@ import java.lang.annotation.Target;
 @Documented
 @Component
 public @interface GrackleOperators {
-    String value() default "";
 }
