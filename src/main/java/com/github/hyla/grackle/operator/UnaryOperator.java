@@ -9,7 +9,7 @@ public interface UnaryOperator extends Operator {
 
     @Override
     default DetachedCriteria apply(DetachedCriteria criteria, String propertyName, Object... args) {
-        assert args.length == 0 : "Unary operator can receive no arguments";
+        assert args == null || args.length == 0 : "Unary operator can receive no arguments";
         return apply(criteria, propertyName);
     }
 }

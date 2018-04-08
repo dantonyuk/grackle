@@ -65,6 +65,7 @@ public class EntityQueryTest {
         assertEquals(1, bookQuery
                 .author_nameIs("Tolkien")
                 .titleLike("%Hobbit%")
+                .titleNotNull()
                 .count());
 
         assertEquals(1, bookQuery

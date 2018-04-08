@@ -12,6 +12,8 @@ public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
 
     BookQuery titleIs(String title);
 
+    BookQuery titleNotNull();
+
     BookQuery titleLike(String title);
 
     BookQuery authorIs(Author author);
