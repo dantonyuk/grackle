@@ -7,7 +7,6 @@ import com.github.hyla.grackle.domain.Author;
 import com.github.hyla.grackle.domain.Book;
 
 @GrackleQuery
-//@GrackleAlias(name = "authorName", value = "author.name")
 public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
 
     BookQuery titleIs(String title);
@@ -33,7 +32,7 @@ public interface BookQuery extends EntityQuery<Book, Long, BookQuery> {
         @WithAlias(name="writer", path="author"),
         @WithAlias(name="thename", path="name")
     })
-    BookQuery writer_thename(String name);
+    BookQuery writer_Thename(String name);
 
     default BookQuery isBestseller() {
         return ratingGreaterOrEqual(5);

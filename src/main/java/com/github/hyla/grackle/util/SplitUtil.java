@@ -36,6 +36,7 @@ public class SplitUtil {
 
     public static List<String> splitWithAliases(String s, Map<String, List<String>> aliases) {
         return Arrays.stream(s.split("_"))
+                .map(StringUtils::uncapitalize)
                 .flatMap(part -> aliases.getOrDefault(part, singletonList(part)).stream())
                 .collect(toList());
     }
