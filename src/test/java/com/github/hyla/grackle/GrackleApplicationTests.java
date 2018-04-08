@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 
 @SpringBootApplication
-@EnableGrackleQueries(basePackages = "com.github.hyla.grackle")
+@EnableGrackleQueries
 public class GrackleApplicationTests {
 
     @Bean

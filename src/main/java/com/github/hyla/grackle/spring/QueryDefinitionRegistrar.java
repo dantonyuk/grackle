@@ -32,6 +32,10 @@ public class QueryDefinitionRegistrar implements ImportBeanDefinitionRegistrar, 
         Map<String, Object> annotationAttributes = metadata
                 .getAnnotationAttributes(EnableGrackleQueries.class.getName());
         String[] basePackages = (String[]) annotationAttributes.get("basePackages");
+        if (basePackages == null || basePackages.length == 0) {
+            String configPackage = metadata.getClassName().replaceFirst("\\.[^.]+$", "");
+            basePackages = new String[] { configPackage };
+        }
 
         GrackleClassPathScanner scanner = new GrackleClassPathScanner(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(GrackleQuery.class));
