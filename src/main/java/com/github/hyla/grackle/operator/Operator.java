@@ -1,8 +1,8 @@
 package com.github.hyla.grackle.operator;
 
-import org.hibernate.criterion.DetachedCriteria;
+import com.github.hyla.grackle.query.DetachedCriteriaTransformer;
 
 public interface Operator {
 
-    DetachedCriteria apply(DetachedCriteria criteria, String propertyName, Object... args);
+    DetachedCriteriaTransformer apply(String propertyName, Object... args);
 }

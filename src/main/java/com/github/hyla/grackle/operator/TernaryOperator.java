@@ -1,5 +1,6 @@
 package com.github.hyla.grackle.operator;
 
+import com.github.hyla.grackle.query.DetachedCriteriaTransformer;
 import org.hibernate.criterion.DetachedCriteria;
 
 @FunctionalInterface
@@ -9,8 +10,8 @@ public interface TernaryOperator<T> extends Operator {
 
     @Override
     @SuppressWarnings("unchecked")
-    default DetachedCriteria apply(DetachedCriteria criteria, String propertyName, Object... args) {
+    default DetachedCriteriaTransformer apply(String propertyName, Object... args) {
         assert args.length == 2 : "Ternary operator can receive exactly two arguments";
-        return apply(criteria, propertyName, (T) args[0], (T) args[1]);
+        return criteria -> apply(criteria, propertyName, (T) args[0], (T) args[1]);
     }
 }
